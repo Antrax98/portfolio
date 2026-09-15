@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { authApi } from '@/lib/api/auth';
+import { authApi } from '@/lib/api/client/auth';
 import { errorMessage } from '@/lib/errors';
 
 export default function LoginPage() {

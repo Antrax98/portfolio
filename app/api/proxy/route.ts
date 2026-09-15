@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { BACKEND_URL, SESSION_COOKIE, SESSION_MAX_AGE } from '@/lib/config';
-import type { ApiResponse, IssuedToken } from '@/lib/types';
+import type { ApiResponse } from '@/lib/api/transport';
+import type { IssuedToken } from '@/lib/api/schemas';
 
 export const dynamic = 'force-dynamic';
 

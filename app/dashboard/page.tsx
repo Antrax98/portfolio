@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Button, Container, Stack, Typography } from '@mui/material';
-import { authApi } from '@/lib/api/auth';
+import { authApi } from '@/lib/api/client/auth';
 
 export default function DashboardPage() {
   const router = useRouter();

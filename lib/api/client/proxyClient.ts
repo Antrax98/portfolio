@@ -1,6 +1,5 @@
-import type { ApiResponse } from './types';
-
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+import { REQUEST_TIMEOUT_MS } from '../../config';
+import type { ApiResponse, HttpMethod } from '../transport';
 
 export interface ProxyClientParams {
   endpoint: string;
@@ -13,13 +12,13 @@ export async function proxyClient<T>({
   method = 'GET',
   body,
 }: ProxyClientParams): Promise<T> {
-  const res = await fetch(
-    `/api/proxy?endpoint=${encodeURIComponent(endpoint)}`,
-    {
+  const res = await withTimeout((signal) =>
+    fetch(`/api/proxy?endpoint=${encodeURIComponent(endpoint)}`, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: body !== undefined ? JSON.stringify(body) : undefined,
-    },
+      signal,
+    }),
   );
 
   // Un 401 desde /auth/* son credenciales malas y lo muestra el formulario.
@@ -41,4 +40,20 @@ export async function proxyClient<T>({
   }
 
   return envelope?.data as T;
+}
+
+async function withTimeout(run: (signal: AbortSignal) => Promise<Response>) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  try {
+    return await run(controller.signal);
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new Error('La petición tardó demasiado. Inténtalo de nuevo.');
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
 }

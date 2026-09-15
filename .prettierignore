@@ -4,4 +4,4 @@ out
 build
 next-env.d.ts
 pnpm-lock.yaml
-lib/api-types.ts
+lib/api/generated.ts
