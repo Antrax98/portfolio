@@ -1,5 +1,5 @@
 import { proxyClient } from '../proxyClient';
-import type { IssuedToken, LoginBody } from './shemas';
+import type { IssuedToken, LoginBody } from './schemas';
 
 export const authApi = {
   login: (body: LoginBody) =>
