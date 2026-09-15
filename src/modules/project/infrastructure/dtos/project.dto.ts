@@ -1,0 +1,106 @@
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsBoolean,
+  IsDateString,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+import {
+  ProjectAssetProps,
+  ProjectProps,
+} from '../../domain/interfaces/project.interface';
+import { ASSET_KINDS } from '../../domain/value-objects/project-asset.value-object';
+
+export class ProjectAssetDto implements ProjectAssetProps {
+  @IsIn(ASSET_KINDS)
+  kind: string;
+
+  @IsUrl()
+  url: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  label: string | null;
+
+  @IsInt()
+  @Min(0)
+  position: number;
+}
+
+export class CreateProjectDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(140)
+  slug: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(140)
+  title: string;
+
+  /** Markdown. El cliente lo renderiza; el servidor guarda la fuente. */
+  @IsOptional()
+  @IsString()
+  description?: string | null;
+
+  @IsOptional()
+  @IsDateString()
+  startedAt?: string | null;
+
+  @IsOptional()
+  @IsDateString()
+  endedAt?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  published?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  position?: number;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProjectAssetDto)
+  assets?: ProjectAssetDto[];
+}
+
+export class UpdateProjectDto extends CreateProjectDto {
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(140)
+  declare slug: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(140)
+  declare title: string;
+}
+
+export class ProjectDto implements ProjectProps {
+  id: number;
+  userId: number;
+  slug: string;
+  title: string;
+  description: string | null;
+  startedAt: Date | null;
+  endedAt: Date | null;
+  published: boolean;
+  position: number;
+  assets: ProjectAssetDto[];
+  createdAt: Date;
+  updatedAt: Date;
+}
