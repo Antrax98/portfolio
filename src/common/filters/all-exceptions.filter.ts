@@ -13,6 +13,7 @@ import {
   ApiErrorDetail,
   ApiResponse,
 } from '../interfaces/api-response.interface';
+import { AppException } from '../exceptions/app.exception';
 
 interface DescribedException {
   code: number;
@@ -59,6 +60,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
   }
 
   private describe(exception: unknown): DescribedException {
+    if (exception instanceof AppException) {
+      return {
+        code: exception.code,
+        message: exception.message,
+        errors: exception.errors,
+      };
+    }
+
     if (exception instanceof HttpException) {
       return this.fromHttpException(exception);
     }
