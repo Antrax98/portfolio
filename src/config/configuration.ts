@@ -8,4 +8,9 @@ export default () => ({
     pass: process.env.DB_PASS,
     name: process.env.DB_NAME,
   },
+  auth: {
+    jwt_secret: process.env.JWT_SECRET,
+    refresh_token_secret: process.env.REFRESH_TOKEN,
+    jwt_expires_in: process.env.JWT_EXPIRES_IN || '1h',
+  },
 });

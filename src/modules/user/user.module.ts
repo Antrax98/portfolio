@@ -14,6 +14,6 @@ import { UserRepositoryAdapter } from './infrastructure/persistences/repositorie
     { provide: UserRepositoryPort, useClass: UserRepositoryAdapter },
     { provide: UserQueryPort, useClass: UserQueryAdapter },
   ],
-  exports: [UserQueryPort],
+  exports: [UserQueryPort, UserService],
 })
 export class UserModule {}

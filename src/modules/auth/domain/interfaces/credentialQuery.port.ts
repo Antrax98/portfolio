@@ -6,4 +6,6 @@ export abstract class CredentialQueryPort {
   ): Promise<CredentialProps | null>;
 
   abstract countCredentials(): Promise<number>;
+
+  abstract findSoleOwnerUserId(): Promise<number | null>;
 }

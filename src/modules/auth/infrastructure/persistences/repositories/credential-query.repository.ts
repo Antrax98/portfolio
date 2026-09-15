@@ -23,4 +23,14 @@ export class CredentialQueryAdapter implements CredentialQueryPort {
   async countCredentials(): Promise<number> {
     return this.dataSource.manager.count(CredentialEntity);
   }
+
+  async findSoleOwnerUserId(): Promise<number | null> {
+    const rows = await this.dataSource.manager.find(CredentialEntity, {
+      select: { userId: true },
+      order: { id: 'ASC' },
+      take: 2,
+    });
+
+    return rows.length === 1 ? rows[0].userId : null;
+  }
 }
