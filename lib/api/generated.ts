@@ -160,8 +160,8 @@ export interface components {
             assets?: components["schemas"]["ProjectAssetDto"][];
         };
         UpdateProjectDto: {
-            slug: string;
-            title: string;
+            slug?: string;
+            title?: string;
             description?: string | null;
             startedAt?: string | null;
             endedAt?: string | null;

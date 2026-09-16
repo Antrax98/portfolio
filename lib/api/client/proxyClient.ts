@@ -1,4 +1,5 @@
 import { REQUEST_TIMEOUT_MS } from '../../config';
+import { ApiError } from '../apiError';
 import type { ApiResponse, HttpMethod } from '../transport';
 
 export interface ProxyClientParams {
@@ -24,7 +25,7 @@ export async function proxyClient<T>({
   // Un 401 desde /auth/* son credenciales malas y lo muestra el formulario.
   // Desde cualquier otro sitio significa que la sesión murió.
   if (res.status === 401 && !endpoint.startsWith('/auth/')) {
-    await fetch('/api/logout', { method: 'POST' });
+    await fetch('/api/proxy/logout', { method: 'POST' });
     window.location.href = '/login';
     throw new Error('Session expired');
   }
@@ -36,7 +37,11 @@ export async function proxyClient<T>({
     .catch(() => null)) as ApiResponse<T> | null;
 
   if (!res.ok) {
-    throw new Error(envelope?.message ?? `Error ${res.status}`);
+    throw new ApiError(
+      res.status,
+      envelope?.message ?? `Error ${res.status}`,
+      envelope?.errors ?? [],
+    );
   }
 
   return envelope?.data as T;

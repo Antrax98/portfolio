@@ -2,17 +2,10 @@ import 'server-only';
 
 import { cookies } from 'next/headers';
 import { BACKEND_URL, REQUEST_TIMEOUT_MS, SESSION_COOKIE } from '../../config';
+import { ApiError } from '../apiError';
 import type { ApiResponse, HttpMethod } from '../transport';
 
-export class ApiError extends Error {
-  constructor(
-    readonly status: number,
-    message: string,
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
+export { ApiError };
 
 export interface ServerFetchParams {
   endpoint: string;
@@ -66,7 +59,11 @@ export async function serverFetch<T>({
     .catch(() => null)) as ApiResponse<T> | null;
 
   if (!res.ok) {
-    throw new ApiError(res.status, envelope?.message ?? `Error ${res.status}`);
+    throw new ApiError(
+      res.status,
+      envelope?.message ?? `Error ${res.status}`,
+      envelope?.errors ?? [],
+    );
   }
 
   return envelope?.data as T;
