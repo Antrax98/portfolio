@@ -1,4 +1,5 @@
 import { Type } from 'class-transformer';
+import { IsParsableUrl } from '../../../../common/validators/is-parsable-url.validator';
 import {
   IsArray,
   IsEmail,
@@ -22,7 +23,7 @@ export class ProfileLinkDto implements ProfileLinkProps {
   @IsIn(LINK_KINDS)
   kind: string;
 
-  @IsUrl()
+  @IsParsableUrl()
   url: string;
 
   @IsOptional()

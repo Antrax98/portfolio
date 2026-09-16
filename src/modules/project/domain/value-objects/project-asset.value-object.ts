@@ -1,4 +1,5 @@
 import { DomainErrorCollector } from '../../../../common/domain/error-collector';
+import { SAFE_URL_MESSAGE, isSafeUrl } from '../../../../common/domain/url';
 import { ProjectAssetProps } from '../interfaces/project.interface';
 
 export const ASSET_KINDS = [
@@ -34,8 +35,8 @@ export class ProjectAsset {
       valid = false;
     }
 
-    if (typeof props.url !== 'string' || !URL.canParse(props.url)) {
-      errors.add(`${field}.url`, `"${props.url}" is not a valid URL`);
+    if (!isSafeUrl(props.url)) {
+      errors.add(`${field}.url`, `"${props.url}" ${SAFE_URL_MESSAGE}`);
       valid = false;
     }
 
