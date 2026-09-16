@@ -26,6 +26,11 @@ export async function proxyClient<T>({
   // Desde cualquier otro sitio significa que la sesión murió.
   if (res.status === 401 && !endpoint.startsWith('/auth/')) {
     await fetch('/api/proxy/logout', { method: 'POST' });
+    // Recarga completa a propósito, y no router.push(): esto no es un
+    // componente y no hay router a mano, pero sobre todo la sesión acaba de
+    // morir y conviene tirar el estado del cliente entero en vez de navegar
+    // dentro de la misma aplicación con datos ya inválidos en memoria.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = '/login';
     throw new Error('Session expired');
   }

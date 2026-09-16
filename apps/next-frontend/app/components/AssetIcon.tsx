@@ -1,4 +1,3 @@
-import ApiIcon from '@mui/icons-material/Api';
 import CodeIcon from '@mui/icons-material/Code';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';

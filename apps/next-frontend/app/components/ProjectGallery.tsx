@@ -6,7 +6,6 @@ export function ProjectGallery({ images }: { images: ProjectAsset[] }) {
     <Stack spacing={3}>
       {images.map((image) => (
         <Stack key={image.url} spacing={0.5}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <Box
             component="img"
             src={image.url}
