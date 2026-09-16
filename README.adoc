@@ -196,3 +196,44 @@ Dos cosas que se notan nada más clonar, y que están pendientes a propósito:
   verificado hasta ahora se hizo levantando la aplicación.
 * *El lint del frontend está roto.* `typescript-eslint` 8.70 no soporta
   TypeScript 7.0.2 y `pnpm lint` falla sin llegar a analizar nada.
+
+== Si olvidas la contraseña
+
+No hay recuperación por correo: para un portafolio de una sola persona no
+compensa montar un servidor de correo. Pero tampoco te quedas fuera, porque la
+credencial vive en una tabla aparte del usuario y el contenido no cuelga de
+ella.
+
+Borra la credencial directamente en la base:
+
+[source,bash]
+----
+psql -h localhost -U nest -d nestdb -c 'DELETE FROM auth_credentials;'
+----
+
+Eso deja el registro abierto otra vez: entra a `/setup` y créala de nuevo *con
+el mismo correo*. `register` reutiliza el usuario que ya existe con ese correo
+en lugar de crear otro, así que conservas el mismo `user_id` y tu perfil y tus
+proyectos siguen donde estaban.
+
+WARNING: Tiene que ser *el mismo correo*. Con uno distinto se crea un usuario
+nuevo con otro `id`, y el perfil y los proyectos quedan huérfanos apuntando al
+anterior: no se borran, pero dejan de aparecer, porque el portafolio los busca
+por el id de su dueño.
+
+NOTE: El nombre de usuario que escribas al volver a registrarte se ignora. Si ya
+existe un usuario con ese correo, `register` lo reutiliza entero y no toca el
+`username`. No falla ni avisa, simplemente no cambia.
+
+Si además quieres empezar de cero, vacía las tablas de datos y deja las
+migraciones en paz:
+
+[source,bash]
+----
+psql -h localhost -U nest -d nestdb -c \
+  'TRUNCATE users, auth_credentials, profiles, profile_links, projects, project_assets RESTART IDENTITY CASCADE;'
+----
+
+IMPORTANT: No incluyas la tabla `migrations` en ese `TRUNCATE`. Si la vacías,
+TypeORM creerá que el esquema está sin aplicar y `migration:run` fallará al
+intentar crear tablas que ya existen.
