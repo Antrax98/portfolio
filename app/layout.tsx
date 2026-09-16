@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="es">
+    <html lang="es" style={{ colorScheme: 'dark' }}>
       <body>
         <AppRouterCacheProvider>
           <ThemeRegistry>{children}</ThemeRegistry>
