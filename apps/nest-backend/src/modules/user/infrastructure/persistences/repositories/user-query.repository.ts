@@ -21,6 +21,19 @@ export class UserQueryAdapter implements UserQueryPort {
     });
   }
 
+  async findOneUserByEmailOrUsername(
+    identifier: string,
+  ): Promise<UserProps | null> {
+    //los dos se guardan ya en minusculas, asi que basta con comparar igual y
+    //la consulta aprovecha los indices unicos de ambas columnas
+    const limpio = identifier.trim().toLowerCase();
+
+    //un array en el where es un OR en TypeORM
+    return this.dataSource.manager.findOne(UserEntity, {
+      where: [{ email: limpio }, { username: limpio }],
+    });
+  }
+
   async countUsers(filters: UserFilterProps): Promise<number> {
     return this.dataSource.manager.count(UserEntity, {
       where: UserQueryAdapter.toWhere(filters),

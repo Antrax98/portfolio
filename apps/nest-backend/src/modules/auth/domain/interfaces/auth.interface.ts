@@ -4,7 +4,8 @@ export interface AuthClaims {
 }
 
 export interface LoginProps {
-  email: string;
+  //correo o nombre de usuario, el dominio no distingue cual de los dos es
+  identifier: string;
   password: string;
 }
 

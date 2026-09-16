@@ -2,6 +2,10 @@ import { DomainErrorCollector } from '../../../../common/domain/error-collector'
 import { UserNewProps, UserProps } from '../interfaces/user.interface';
 
 const MAX_USERNAME_LENGTH = 100;
+//letras, numeros, guion y guion bajo, empezando por letra o numero. Sin
+//espacios: el username es el identificador con el que se entra, no el nombre
+//que se muestra, y ese vive en profile.fullName.
+const USERNAME_SHAPE = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/;
 const MAX_EMAIL_LENGTH = 255;
 const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -54,6 +58,14 @@ export class User {
         'username',
         `Username cannot be longer than ${MAX_USERNAME_LENGTH} characters`,
       );
+      return;
+    }
+
+    if (!USERNAME_SHAPE.test(username)) {
+      errors.add(
+        'username',
+        'Username can only contain letters, numbers, hyphens and underscores, and must start with a letter or number',
+      );
     }
   }
 
@@ -79,8 +91,12 @@ export class User {
     }
   }
 
+  //a minusculas como el correo: si el login compara sin distinguir la caja, la
+  //unicidad tiene que ignorarla tambien, o 'Antrax' y 'antrax' serian dos
+  //usuarios distintos y entrar con cualquiera de los dos seria ambiguo.
+  //Normalizando al escribir, el indice unico que ya existe basta.
   private static normalizeUsername(username: string): string {
-    return typeof username === 'string' ? username.trim() : '';
+    return typeof username === 'string' ? username.trim().toLowerCase() : '';
   }
 
   private static normalizeEmail(email: string): string {

@@ -16,7 +16,7 @@ import { AuthTokenPort } from '../../domain/interfaces/authToken.port';
 import { UserService } from '../../../user/application/services/user.service';
 import { BusinessException } from '../../../../common/exceptions/business.exception';
 
-const INVALID_CREDENTIALS = 'Invalid Email or Password';
+const INVALID_CREDENTIALS = 'Invalid credentials';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +30,9 @@ export class AuthService {
   ) {}
 
   async login(params: LoginProps): Promise<IssuedToken> {
-    const user = await this.users.findOneUser({ email: params.email });
+    const user = await this.users.findOneUserByEmailOrUsername(
+      params.identifier,
+    );
     if (!user) throw new UnauthenticatedException(INVALID_CREDENTIALS);
 
     const credential = await this.credentialReads.findCredentialByUserId(

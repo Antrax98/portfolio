@@ -108,8 +108,7 @@ export interface components {
             token: string;
         };
         LoginDto: {
-            /** Format: email */
-            email: string;
+            identifier: string;
             password: string;
         };
         CredentialSummaryDto: {
@@ -126,7 +125,6 @@ export interface components {
         ProjectAssetDto: {
             /** @enum {string} */
             kind: "repository" | "demo" | "image" | "video" | "doc";
-            /** Format: uri */
             url: string;
             label: string | null;
             position: number;
@@ -172,7 +170,6 @@ export interface components {
         ProfileLinkDto: {
             /** @enum {string} */
             kind: "github" | "linkedin" | "web" | "email" | "other";
-            /** Format: uri */
             url: string;
             label: string | null;
             position: number;

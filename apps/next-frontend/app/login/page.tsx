@@ -18,7 +18,7 @@ import { errorMessage } from '@/lib/errors';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await authApi.login({ email, password });
+      await authApi.login({ identifier, password });
       router.push('/dashboard');
       router.refresh();
     } catch (err) {
@@ -62,10 +62,10 @@ export default function LoginPage() {
             {error && <Alert severity="error">{error}</Alert>}
 
             <TextField
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              label="Correo o nombre de usuario"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              autoComplete="username"
               required
               fullWidth
             />

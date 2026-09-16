@@ -16,8 +16,10 @@ export class RegisterDto {
 }
 
 export class LoginDto {
-  @IsEmail()
-  email: string;
+  /** Correo o nombre de usuario. */
+  @IsNotEmpty()
+  @IsString()
+  identifier: string;
 
   @IsNotEmpty()
   @IsString()
