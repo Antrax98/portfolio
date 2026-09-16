@@ -2,6 +2,7 @@
 
 import { useState, type SubmitEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
   Alert,
   Box,
@@ -43,6 +44,15 @@ export default function LoginPage() {
       sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}
     >
       <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
+        <Button
+          href="/"
+          startIcon={<ArrowBackIcon />}
+          size="small"
+          sx={{ mb: 2, ml: -1, color: 'text.secondary' }}
+        >
+          Volver al portafolio
+        </Button>
+
         <Typography variant="h5" sx={{ fontWeight: 700 }} gutterBottom>
           Iniciar sesión
         </Typography>

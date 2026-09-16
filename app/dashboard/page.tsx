@@ -1,26 +1,8 @@
-'use client';
+import { getDashboardData } from '@/lib/api/server/dashboard';
+import { DashboardPanel } from './DashboardPanel';
 
-import { useRouter } from 'next/navigation';
-import { Button, Container, Stack, Typography } from '@mui/material';
-import { authApi } from '@/lib/api/client/auth';
+export default async function DashboardPage() {
+  const { profile, projects } = await getDashboardData();
 
-export default function DashboardPage() {
-  const router = useRouter();
-
-  async function handleLogout() {
-    await authApi.logout();
-    router.replace('/login');
-    router.refresh();
-  }
-
-  return (
-    <Container sx={{ py: 4 }}>
-      <Stack spacing={3} sx={{ alignItems: 'flex-start' }}>
-        <Typography variant="h4">Panel</Typography>
-        <Button onClick={handleLogout} variant="outlined">
-          Cerrar sesión
-        </Button>
-      </Stack>
-    </Container>
-  );
+  return <DashboardPanel profile={profile} projects={projects} />;
 }
