@@ -189,13 +189,12 @@ pasar de 100 caracteres por línea.
 
 == Limitaciones conocidas
 
-Dos cosas que se notan nada más clonar, y que están pendientes a propósito:
-
-* *Los tests no corren.* TypeScript 7 exige `rootDir` explícito, y resuelto eso
-  Jest 30 necesita Node ≥ 24.9 para cargar NestJS 12, que es ESM puro. Todo lo
-  verificado hasta ahora se hizo levantando la aplicación.
-* *El lint del frontend está roto.* `typescript-eslint` 8.70 no soporta
-  TypeScript 7.0.2 y `pnpm lint` falla sin llegar a analizar nada.
+*No hay tests escritos.* Jest corre —el `tsconfig.json` declara `rootDir`, que
+es lo que le faltaba— pero no hay ni un solo `.spec.ts`. Todo lo verificado
+hasta ahora se hizo levantando la aplicación contra una base desechable y con
+`curl`. Los primeros candidatos son los que no necesitan base: `Password`,
+`User`, `Profile` y los value objects de enlaces y recursos, que son reglas
+puras.
 
 == Si olvidas la contraseña
 
