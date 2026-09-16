@@ -1,22 +1,13 @@
-import { Container, Stack, Typography } from '@mui/material';
+import { redirect } from 'next/navigation';
+import { getPortfolio } from '@/lib/api/server/portfolio';
+import { SetupForm } from './SetupForm';
 
-export default function SetupPage() {
-  return (
-    <Container maxWidth="sm" sx={{ py: 10 }}>
-      <Stack spacing={2}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
-          Portafolio sin configurar
-        </Typography>
+export default async function SetupPage() {
+  // El registro se cierra solo en el backend, pero sin esto la página seguiría
+  // siendo alcanzable escribiendo la URL y ofrecería un formulario que solo
+  // sabe fallar.
+  const portfolio = await getPortfolio();
+  if (portfolio) redirect('/');
 
-        <Typography color="text.secondary">
-          Todavía no hay ninguna cuenta. Crea la primera con{' '}
-          <code>POST /auth/register</code> y vuelve a cargar esta página.
-        </Typography>
-
-        <Typography variant="body2" color="text.secondary">
-          El registro se cierra solo en cuanto exista una credencial.
-        </Typography>
-      </Stack>
-    </Container>
-  );
+  return <SetupForm />;
 }
