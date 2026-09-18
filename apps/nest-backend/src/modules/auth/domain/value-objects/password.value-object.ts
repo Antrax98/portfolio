@@ -40,7 +40,6 @@ export class Password {
   }
 
   [Symbol.for('nodejs.util.inspect.custom')](): string {
-    // (5)
     return '[redacted]';
   }
 }

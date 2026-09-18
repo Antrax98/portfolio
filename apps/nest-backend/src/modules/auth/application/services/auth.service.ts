@@ -41,7 +41,6 @@ export class AuthService {
     if (!credential) throw new UnauthenticatedException(INVALID_CREDENTIALS);
 
     const matches = await this.hasher.verify(
-      // (2)
       params.password,
       credential.passwordHash,
     );

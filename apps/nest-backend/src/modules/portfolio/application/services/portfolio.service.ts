@@ -33,7 +33,7 @@ export class PortfolioService {
 
     const [profile, projects] = await Promise.all([
       this.profiles.findByUserId(ownerId),
-      this.projects.findPublishedByUserId(ownerId, query), // (1)
+      this.projects.findPublishedByUserId(ownerId, query),
     ]);
 
     return {

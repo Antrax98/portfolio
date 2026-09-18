@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/swagger';
 import { IsParsableUrl } from '../../../../common/validators/is-parsable-url.validator';
 import {
   IsArray,
@@ -10,7 +10,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsUrl,
   MaxLength,
   Min,
   ValidateNested,
@@ -21,7 +20,6 @@ import {
 } from '../../domain/interfaces/project.interface';
 import { ASSET_KINDS } from '../../domain/value-objects/project-asset.value-object';
 import { Page } from '../../../../common/interfaces/page.interface';
-import { ProfileDto } from '../../../profile/infrastructure/dtos/profile.dto';
 
 export class ProjectAssetDto implements ProjectAssetProps {
   @IsIn(ASSET_KINDS)

@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(), // (1)
+      context.getHandler(),
       context.getClass(),
     ]);
 
@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
 
     (request as Request & Record<string, unknown>)[CALLER_KEY] = caller;
 
-    return true; // (2)
+    return true;
   }
 
   private readToken(request: Request): string | null {

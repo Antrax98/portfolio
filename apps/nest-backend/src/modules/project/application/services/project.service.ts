@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { BusinessException } from '../../../../common/exceptions/business.exception';
 import { ResourceNotFoundException } from '../../../../common/exceptions/resource-not-found.exception';
 import { AuthenticatedCaller } from '../../../auth/domain/interfaces/auth.interface';
 import {
