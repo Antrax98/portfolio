@@ -6,8 +6,8 @@ import { projectsApi } from '@/lib/api/client/projects';
 import type { Project } from '@/lib/api/schemas';
 import { moveRow } from '@/lib/dashboard/rows';
 import { errorMessage } from '@/lib/errors';
-import { ConfirmDialog } from '../components/ConfirmDialog';
-import { useFeedback } from '../components/Feedback';
+import { ConfirmDialog } from '../_components/ConfirmDialog';
+import { useFeedback } from '../_components/Feedback';
 import { ProjectForm } from './ProjectForm';
 import { ProjectList } from './ProjectList';
 

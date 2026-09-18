@@ -2,9 +2,9 @@ import { redirect } from 'next/navigation';
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { getPortfolio } from '@/lib/api/server/portfolio';
 import { hasSession } from '@/lib/api/server/session';
-import { OwnerBar } from './components/OwnerBar';
-import { ProfileHeader } from './components/ProfileHeader';
-import { ProjectCard } from './components/ProjectCard';
+import { OwnerBar } from './_components/OwnerBar';
+import { ProfileHeader } from './_components/ProfileHeader';
+import { ProjectCard } from './_components/ProjectCard';
 
 export default async function LandingPage() {
   const [portfolio, authenticated] = await Promise.all([

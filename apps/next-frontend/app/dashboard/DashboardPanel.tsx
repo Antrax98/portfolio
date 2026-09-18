@@ -6,10 +6,10 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Button, Container, Stack, Typography } from '@mui/material';
 import { authApi } from '@/lib/api/client/auth';
 import type { Profile, Project } from '@/lib/api/schemas';
-import { ProjectTabs } from '@/app/components/ProjectTabs';
-import { FeedbackProvider } from './components/Feedback';
-import { ProfileForm } from './profile/ProfileForm';
-import { ProjectsPanel } from './projects/ProjectsPanel';
+import { ProjectTabs } from '@/app/_components/ProjectTabs';
+import { FeedbackProvider } from './_components/Feedback';
+import { ProfileForm } from './_profile/ProfileForm';
+import { ProjectsPanel } from './_projects/ProjectsPanel';
 
 interface Props {
   profile: Profile;

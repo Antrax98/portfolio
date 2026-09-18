@@ -10,13 +10,13 @@ import {
 } from '@mui/material';
 import { getPortfolio } from '@/lib/api/server/portfolio';
 import { hasSession } from '@/lib/api/server/session';
-import { OwnerBar } from '@/app/components/OwnerBar';
+import { OwnerBar } from '@/app/_components/OwnerBar';
 import { assetsOf, LINK_KINDS } from '@/lib/assets';
-import { lookFor } from '@/app/components/AssetIcon';
-import { Markdown } from '@/app/components/Markdown';
-import { ProjectGallery } from '@/app/components/ProjectGallery';
-import { ProjectTabs, type ProjectTab } from '@/app/components/ProjectTabs';
-import { VideoPlayer } from '@/app/components/VideoPlayer';
+import { lookFor } from '@/app/_components/AssetIcon';
+import { Markdown } from '@/app/_components/Markdown';
+import { ProjectGallery } from '@/app/_components/ProjectGallery';
+import { ProjectTabs, type ProjectTab } from '@/app/_components/ProjectTabs';
+import { VideoPlayer } from '@/app/_components/VideoPlayer';
 
 export default async function ProjectDetailPage({
   params,

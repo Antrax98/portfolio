@@ -29,10 +29,10 @@ import {
   type DraftRow,
 } from '@/lib/dashboard/rows';
 import { errorMessage } from '@/lib/errors';
-import { useFeedback } from '../components/Feedback';
-import { SectionTitle } from '../components/SectionTitle';
-import { MarkdownField } from '../components/MarkdownField';
-import { RowsEditor } from '../components/RowsEditor';
+import { useFeedback } from '../_components/Feedback';
+import { SectionTitle } from '../_components/SectionTitle';
+import { MarkdownField } from '../_components/MarkdownField';
+import { RowsEditor } from '../_components/RowsEditor';
 
 const EMPTY: ProjectValues = {
   slug: '',

@@ -12,7 +12,7 @@ import {
   ToggleButtonGroup,
   Typography,
 } from '@mui/material';
-import { Markdown } from '@/app/components/Markdown';
+import { Markdown } from '@/app/_components/Markdown';
 
 interface Props {
   title: string;
