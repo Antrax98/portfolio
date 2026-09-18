@@ -23,6 +23,9 @@ const theme = createTheme({
   },
   shape: { borderRadius: 10 },
   typography: {
+    // La variable la define next/font en <html>; el resto de la cadena queda
+    // como respaldo por si la fuente no llegara a cargar.
+    fontFamily: 'var(--font-roboto), "Helvetica", "Arial", sans-serif',
     h4: { letterSpacing: '-0.02em' },
     h5: { letterSpacing: '-0.01em' },
   },
