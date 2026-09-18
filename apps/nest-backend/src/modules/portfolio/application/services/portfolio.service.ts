@@ -7,6 +7,7 @@ import { Profile } from '../../../profile/domain/models/profile.model';
 import { ProjectQueryPort } from '../../../project/domain/interfaces/projectQuery.port';
 import { UserQueryPort } from '../../../user/domain/interfaces/userQuery.port';
 import { PortfolioProps } from '../../domain/interfaces/portfolio.interface';
+import { PageQuery } from '../../../../common/interfaces/page.interface';
 
 @Injectable()
 export class PortfolioService {
@@ -17,7 +18,7 @@ export class PortfolioService {
     private readonly projects: ProjectQueryPort,
   ) {}
 
-  async findPortfolio(): Promise<PortfolioProps> {
+  async findPortfolio(query: PageQuery): Promise<PortfolioProps> {
     const ownerId = await this.credentials.findSoleOwnerUserId();
     if (ownerId === null) {
       throw new ResourceNotFoundException('No portfolio has been set up yet');
@@ -32,7 +33,7 @@ export class PortfolioService {
 
     const [profile, projects] = await Promise.all([
       this.profiles.findByUserId(ownerId),
-      this.projects.findPublishedByUserId(ownerId),
+      this.projects.findPublishedByUserId(ownerId, query), // (1)
     ]);
 
     return {

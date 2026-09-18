@@ -5,6 +5,11 @@ import { ProjectProps } from '../../../domain/interfaces/project.interface';
 import { ProjectQueryPort } from '../../../domain/interfaces/projectQuery.port';
 import { ProjectEntity } from '../entities/project.entity';
 import { toProjectProps } from './project.mapper';
+import {
+  Page,
+  PageQuery,
+  toSkipTake,
+} from '../../../../../common/interfaces/page.interface';
 
 @Injectable()
 export class ProjectQueryAdapter implements ProjectQueryPort {
@@ -13,13 +18,25 @@ export class ProjectQueryAdapter implements ProjectQueryPort {
     private readonly dataSource: DataSource,
   ) {}
 
-  async findPublishedByUserId(userId: number): Promise<ProjectProps[]> {
-    const entities = await this.dataSource.manager.find(ProjectEntity, {
-      where: { userId, published: true },
-      order: { position: 'ASC', id: 'ASC' },
-    });
+  async findPublishedByUserId(
+    userId: number,
+    query: PageQuery,
+  ): Promise<Page<ProjectProps>> {
+    const [entities, total] = await this.dataSource.manager.findAndCount(
+      ProjectEntity,
+      {
+        where: { userId, published: true },
+        order: { position: 'ASC', id: 'ASC' },
+        ...toSkipTake(query),
+      },
+    );
 
-    return entities.map(toProjectProps);
+    return {
+      items: entities.map(toProjectProps),
+      total,
+      page: query.page,
+      size: query.size,
+    };
   }
 
   async findAllByUserId(userId: number): Promise<ProjectProps[]> {

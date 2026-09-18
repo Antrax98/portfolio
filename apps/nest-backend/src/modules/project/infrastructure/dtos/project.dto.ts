@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { PartialType } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsParsableUrl } from '../../../../common/validators/is-parsable-url.validator';
 import {
   IsArray,
@@ -20,6 +20,8 @@ import {
   ProjectProps,
 } from '../../domain/interfaces/project.interface';
 import { ASSET_KINDS } from '../../domain/value-objects/project-asset.value-object';
+import { Page } from '../../../../common/interfaces/page.interface';
+import { ProfileDto } from '../../../profile/infrastructure/dtos/profile.dto';
 
 export class ProjectAssetDto implements ProjectAssetProps {
   @IsIn(ASSET_KINDS)
@@ -102,4 +104,12 @@ export class ProjectDto implements ProjectProps {
   assets: ProjectAssetDto[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export class ProjectPageDto implements Page<ProjectProps> {
+  items: ProjectDto[];
+
+  total: number;
+  page: number;
+  size: number;
 }
