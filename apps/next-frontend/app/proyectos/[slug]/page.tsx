@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { getPortfolio } from '@/lib/api/server/portfolio';
+import { getProject } from '@/lib/api/server/portfolio';
 import { hasSession } from '@/lib/api/server/session';
 import { OwnerBar } from '@/app/_components/OwnerBar';
 import { assetsOf, LINK_KINDS } from '@/lib/assets';
@@ -23,11 +23,10 @@ export default async function ProjectDetailPage({
 }: PageProps<'/proyectos/[slug]'>) {
   const { slug } = await params;
 
-  const [portfolio, authenticated] = await Promise.all([
-    getPortfolio(),
+  const [project, authenticated] = await Promise.all([
+    getProject(slug),
     hasSession(),
   ]);
-  const project = portfolio?.projects.find((p) => p.slug === slug);
 
   if (!project) notFound();
 

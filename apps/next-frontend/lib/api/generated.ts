@@ -100,6 +100,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/portfolio/projects/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PortfolioController_findProject"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -198,10 +214,16 @@ export interface components {
             avatarUrl?: string | null;
             links?: components["schemas"]["ProfileLinkDto"][];
         };
+        ProjectPageDto: {
+            items: components["schemas"]["ProjectDto"][];
+            total: number;
+            page: number;
+            size: number;
+        };
         PortfolioDto: {
             username: string;
             profile: components["schemas"]["ProfileDto"];
-            projects: components["schemas"]["ProjectDto"][];
+            projects: components["schemas"]["ProjectPageDto"];
         };
         ApiErrorDetailDto: {
             /** @example email */
@@ -659,7 +681,10 @@ export interface operations {
     };
     PortfolioController_find: {
         parameters: {
-            query?: never;
+            query: {
+                page: number;
+                size: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -694,6 +719,71 @@ export interface operations {
                         /** @example null */
                         data: null;
                         /** @example No portfolio has been set up yet */
+                        message: string;
+                        /** @example null */
+                        errors: components["schemas"]["ApiErrorDetailDto"][] | null;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 500 */
+                        code: number;
+                        /** @example null */
+                        data: null;
+                        /** @example Internal server error */
+                        message: string;
+                        /** @example null */
+                        errors: components["schemas"]["ApiErrorDetailDto"][] | null;
+                    };
+                };
+            };
+        };
+    };
+    PortfolioController_findProject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        code: number;
+                        data: components["schemas"]["ProjectDto"];
+                        /** @example Operation successful */
+                        message: string;
+                        /** @example null */
+                        errors: null;
+                    };
+                };
+            };
+            /** @description Project not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 404 */
+                        code: number;
+                        /** @example null */
+                        data: null;
+                        /** @example Project not found */
                         message: string;
                         /** @example null */
                         errors: components["schemas"]["ApiErrorDetailDto"][] | null;

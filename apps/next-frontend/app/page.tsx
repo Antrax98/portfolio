@@ -4,7 +4,7 @@ import { getPortfolio } from '@/lib/api/server/portfolio';
 import { hasSession } from '@/lib/api/server/session';
 import { OwnerBar } from './_components/OwnerBar';
 import { ProfileHeader } from './_components/ProfileHeader';
-import { ProjectCard } from './_components/ProjectCard';
+import { ProjectCarousel } from './_components/ProjectCarousel';
 
 export default async function LandingPage() {
   const [portfolio, authenticated] = await Promise.all([
@@ -25,21 +25,22 @@ export default async function LandingPage() {
             username={portfolio.username}
           />
 
-          <Stack spacing={2}>
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
-              Proyectos
-            </Typography>
-
-            {portfolio.projects.length === 0 ? (
+          {portfolio.projects.total === 0 ? (
+            <Stack spacing={2}>
+              <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                Proyectos
+              </Typography>
               <Typography color="text.secondary">
                 Todavía no hay proyectos publicados.
               </Typography>
-            ) : (
-              portfolio.projects.map((project) => (
-                <ProjectCard key={project.slug} project={project} />
-              ))
-            )}
-          </Stack>
+            </Stack>
+          ) : (
+            <ProjectCarousel
+              initial={portfolio.projects.items}
+              total={portfolio.projects.total}
+              size={portfolio.projects.size}
+            />
+          )}
         </Stack>
       </Container>
     </Box>
