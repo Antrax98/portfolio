@@ -10,6 +10,7 @@ import configuration from './config/configuration';
 import { DatabaseModule } from './database/database.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { ThrottlingModule } from './throttling/throttling.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
       load: [configuration],
       isGlobal: true,
     }),
+    ThrottlingModule,
     DatabaseModule,
     AuthModule,
     UserModule,

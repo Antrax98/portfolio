@@ -8,6 +8,12 @@ export default () => ({
     pass: process.env.DB_PASS,
     name: process.env.DB_NAME,
   },
+  throttle: {
+    // En milisegundos, no en segundos: cambió en la v5 de @nestjs/throttler y
+    // es el fallo más común al copiar ejemplos viejos.
+    ttl: parseInt(process.env.THROTTLE_TTL ?? '60000', 10),
+    limit: parseInt(process.env.THROTTLE_LIMIT ?? '10', 10),
+  },
   auth: {
     jwt_secret: process.env.JWT_SECRET,
     refresh_token_secret: process.env.REFRESH_TOKEN,
