@@ -6,6 +6,7 @@ import { ApiErrorDetailDto } from './common/swagger/api-error-detail.dto';
 import { applyDefaultErrorResponses } from './common/swagger/default-error-responses';
 import { validationExceptionFactory } from './common/pipes/validation-exception.factory';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe.js';
+import { splash } from './common/console/splash';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -40,5 +41,17 @@ async function bootstrap() {
   );
 
   await app.listen(port);
+
+  // Después del listen: si el puerto estuviera ocupado, no tiene sentido
+  // anunciar una URL que no responde.
+  if (configService.get<string>('nodeEnv') !== 'production') {
+    await splash({
+      titulo: 'Portfolio',
+      lineas: [
+        `API:     http://localhost:${port}`,
+        `OpenAPI: http://localhost:${port}/api`,
+      ],
+    });
+  }
 }
 bootstrap();
