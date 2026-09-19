@@ -12,10 +12,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  // 'port' y no 'PORT': la clave la define configuration.ts, que ya hizo el
-  // parseInt y aplicó el default. getOrThrow porque ahí siempre sale un
-  // number, así que un undefined sería un error de programación, no un caso
-  // a cubrir con un segundo valor por defecto.
   const port = configService.getOrThrow<number>('port');
 
   const config = new DocumentBuilder()
@@ -42,8 +38,6 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  // Después del listen: si el puerto estuviera ocupado, no tiene sentido
-  // anunciar una URL que no responde.
   if (configService.get<string>('nodeEnv') !== 'production') {
     await splash({
       titulo: 'Portfolio',
