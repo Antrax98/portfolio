@@ -111,23 +111,21 @@ export default tseslint.config(
     },
   },
 
-  // Tests live in `application`. `infrastructure` is never tested.
-  // The legacy suites listed below predate this rule and are frozen: they are
-  // kept as teaching material, but no new test is added to them.
+  // `infrastructure` is never tested: a test tied to TypeORM or to HTTP breaks
+  // when the adapter changes, which is exactly what the port exists to prevent.
+  //
+  // Everything else is fair game. `domain` holds pure functions with no
+  // dependencies —value objects, models— and testing them directly is cheaper
+  // and clearer than reaching them through a use case.
   {
-    files: ['src/**/*.spec.ts'],
-    ignores: [
-      'src/**/application/**/*.spec.ts',
-      'src/common/**/*.spec.ts',
-      'src/modules/user/domain/**/*.spec.ts',
-    ],
+    files: ['src/**/infrastructure/**/*.spec.ts'],
     rules: {
       'no-restricted-syntax': [
         'error',
         {
           selector: 'Program',
           message:
-            'Tests belong in `application` (use cases and application services). `infrastructure` is never tested. To protect a rule, move it into `application` or `domain` and test it through the use case.',
+            '`infrastructure` is never tested: the test would be tied to the adapter (TypeORM, HTTP), which is what the port exists to avoid. Test the rule in `domain`, or the flow in `application` through the use case.',
         },
       ],
     },

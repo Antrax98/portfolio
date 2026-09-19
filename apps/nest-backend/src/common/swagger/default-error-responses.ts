@@ -1,9 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import {
-  OpenAPIObject,
-  OperationObject,
-  PathItemObject,
-} from '@nestjs/swagger';
+import { OpenAPIObject, PathItemObject } from '@nestjs/swagger';
 import { buildErrorEnvelopeResponse } from './envelope-schema';
 
 const OPERATION_METHODS = [
@@ -26,7 +22,7 @@ export function applyDefaultErrorResponses(
 ): OpenAPIObject {
   for (const pathItem of Object.values(document.paths ?? {})) {
     for (const method of OPERATION_METHODS) {
-      const operation = pathItem[method] as OperationObject | undefined;
+      const operation = pathItem[method];
       if (!operation) continue;
 
       operation.responses ??= {};

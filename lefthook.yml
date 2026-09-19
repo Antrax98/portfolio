@@ -6,7 +6,7 @@ commit-msg:
 # pre-commit:
 #   parallel: true
 #   commands:
-#     oxlint:
+#     eslint:
 #       glob: "*.ts"
-#       run: pnpm exec oxlint --fix {staged_files}
+#       run: pnpm exec eslint --fix {staged_files}
 #       stage_fixed: true

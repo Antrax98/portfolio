@@ -35,6 +35,11 @@ const POSTGRES_ERRORS: Record<string, { code: number; message: string }> = {
 };
 
 const UNEXPECTED_ERROR = 'Internal server error';
+// Tipado como number a propósito: `code` viene de AppException, donde es un
+// number cualquiera. Comparar un number con un miembro de enum es lo que
+// `no-unsafe-enum-comparison` marca, y con razón: nada garantiza que ese
+// number pertenezca al enum.
+const SERVER_ERROR: number = HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -47,7 +52,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const { code, message, errors } = this.describe(exception);
 
-    if (code >= HttpStatus.INTERNAL_SERVER_ERROR) {
+    if (code >= SERVER_ERROR) {
       this.logger.error(
         exception instanceof Error ? exception.message : String(exception),
         exception instanceof Error ? exception.stack : undefined,

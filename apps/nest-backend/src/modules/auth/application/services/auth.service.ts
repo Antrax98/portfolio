@@ -50,10 +50,9 @@ export class AuthService {
   }
 
   async register(params: RegisterProps): Promise<CredentialSummary> {
-
-    const exist = (await this.credentialReads.countCredentials() > 0);
-    if(exist) throw new BusinessException('There is already an user registered');
-
+    const exist = (await this.credentialReads.countCredentials()) > 0;
+    if (exist)
+      throw new BusinessException('There is already an user registered');
 
     const password = Password.create(params.password);
 
