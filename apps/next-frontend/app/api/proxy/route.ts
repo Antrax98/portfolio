@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { BACKEND_URL, SESSION_COOKIE, SESSION_MAX_AGE } from '@/lib/config';
 import type { ApiResponse } from '@/lib/api/transport';
 import type { IssuedToken } from '@/lib/api/schemas';
+import { clientIpHeader } from '@/lib/api/server/clientIp';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,6 +45,7 @@ async function proxyHandler(req: NextRequest): Promise<NextResponse> {
     method: req.method,
     headers: {
       'Content-Type': 'application/json',
+      ...(await clientIpHeader()),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: rawBody || undefined,

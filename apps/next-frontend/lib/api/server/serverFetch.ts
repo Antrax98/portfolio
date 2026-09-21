@@ -3,6 +3,7 @@ import 'server-only';
 import { cookies } from 'next/headers';
 import { BACKEND_URL, REQUEST_TIMEOUT_MS, SESSION_COOKIE } from '../../config';
 import { ApiError } from '../apiError';
+import { clientIpHeader } from './clientIp';
 import type { ApiResponse, HttpMethod } from '../transport';
 
 export { ApiError };
@@ -22,6 +23,7 @@ export async function serverFetch<T>({
 }: ServerFetchParams): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    ...(await clientIpHeader()),
   };
 
   if (auth) {
