@@ -23,9 +23,11 @@ describe('Password', () => {
       fail('deberia haber lanzado');
     } catch (error) {
       expect(error).toBeInstanceOf(DataValidationException);
-      expect((error as DataValidationException).errors).toEqual([
-        { field: 'password', message: expect.stringContaining('8 characters') },
-      ]);
+
+      const errores = (error as DataValidationException).errors ?? [];
+      expect(errores).toHaveLength(1);
+      expect(errores[0].field).toBe('password');
+      expect(errores[0].message).toContain('8 characters');
     }
   });
 
@@ -33,6 +35,9 @@ describe('Password', () => {
     const password = Password.create('secreto-de-verdad');
 
     it('ni interpolando', () => {
+      // Interpolar algo que no es string es exactamente lo que se prueba aqui:
+      // que un `${password}` perdido en un log no revele nada.
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       expect(`${password}`).not.toContain('secreto');
     });
 
