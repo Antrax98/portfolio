@@ -27,7 +27,7 @@ export class Project {
   static validate(changes: ProjectUpdateProps): ProjectUpdateProps {
     const errors = new DomainErrorCollector();
 
-    const slug = Project.normalize(changes.slug)?.toLowerCase();
+    const slug = Project.normalizeSlug(changes.slug);
     if (slug !== undefined) {
       if (!slug || !SLUG_SHAPE.test(slug)) {
         errors.add('slug', 'Slug must be lowercase words separated by hyphens');
@@ -106,6 +106,16 @@ export class Project {
   ): string | null | undefined {
     if (value === undefined) return undefined;
     return value?.trim() || null;
+  }
+
+  //el toLowerCase va dentro y no encadenado fuera: `null?.toLowerCase()` es
+  //`undefined`, y eso hacia que un slug en blanco pareciera un slug no enviado,
+  //saltandose la validacion entera y devolviendo el valor sin recortar.
+  private static normalizeSlug(
+    value: string | null | undefined,
+  ): string | null | undefined {
+    if (value === undefined) return undefined;
+    return value?.trim().toLowerCase() || null;
   }
 
   private static normalizeMarkdown(
