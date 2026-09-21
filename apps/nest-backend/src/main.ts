@@ -4,8 +4,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ApiErrorDetailDto } from './common/swagger/api-error-detail.dto';
 import { applyDefaultErrorResponses } from './common/swagger/default-error-responses';
-import { validationExceptionFactory } from './common/pipes/validation-exception.factory';
-import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe.js';
+import { setupApp } from './common/setup-app';
 import { splash } from './common/console/splash';
 
 async function bootstrap() {
@@ -27,14 +26,7 @@ async function bootstrap() {
     );
   SwaggerModule.setup('api', app, documentFactory);
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      exceptionFactory: validationExceptionFactory,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
+  setupApp(app);
 
   await app.listen(port);
 
