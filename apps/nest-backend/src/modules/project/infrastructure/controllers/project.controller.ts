@@ -14,6 +14,7 @@ import {
   ApiEnvelope,
   ApiEnvelopeError,
 } from '../../../../common/decorators/api-envelope.decorator';
+import { ResponseMessage } from '../../../../common/decorators/response-message.decorator';
 import { CurrentUser } from '../../../auth/infrastructure/decorators/current-user.decorator';
 import type { AuthenticatedCaller } from '../../../auth/domain/interfaces/auth.interface';
 import { ProjectService } from '../../application/services/project.service';
@@ -71,6 +72,9 @@ export class ProjectController {
 
   @Delete(':slug')
   @HttpCode(HttpStatus.OK)
+  //ApiEnvelope solo escribe el mensaje en el OpenAPI; el que sale de verdad lo
+  //pone el interceptor, y sin esta linea documentaba una cosa y devolvia otra.
+  @ResponseMessage('Project deleted')
   @ApiEnvelope(undefined, { message: 'Project deleted' })
   @ApiEnvelopeError(HttpStatus.NOT_FOUND, 'Project not found')
   async remove(
