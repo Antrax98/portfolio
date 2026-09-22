@@ -1,0 +1,118 @@
+# ┌────────────────────────────────────────────────────┐
+# │ Despliegue del portafolio en el homelab.           │
+# │ Lo sincroniza Arcane desde este repo (GitOps).     │
+# └────────────────────────────────────────────────────┘
+# Tres piezas, y solo UNA sale a internet:
+#
+#   web  ──(traefik-proxy)──> Traefik ──> portfolio.arcane.proyectron.dedyn.io
+#    │
+#    └──(portfolio-internal)──> api ──> db
+#
+# La API no tiene router de Traefik A PROPÓSITO. Con el patrón BFF solo la
+# llama el servidor de Next: el navegador nunca le habla directo, así que
+# publicarla sería regalar superficie de ataque sin ganar nada.
+#
+# LOS TAGS DE IMAGEN LOS REESCRIBE EL CI. Cada despliegue es un commit que
+# cambia esas dos líneas, así que 'git log' es el historial de despliegues y
+# el rollback es revertir el commit. No pongas 'latest' acá: perderías las dos
+# cosas.
+#
+# Los secretos NO están en este archivo ni en este repo (que es público): los
+# pone Arcane en el .env del proyecto. Ver .env.example.
+services:
+  db:
+    image: postgres:18.6-alpine
+    container_name: portfolio-db
+    restart: unless-stopped
+    shm_size: 128mb
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - portfolio_db:/var/lib/postgresql
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    labels:
+      - homelab.tier=opcional
+
+  api:
+    image: ghcr.io/antrax98/portfolio-api:bootstrap
+    container_name: portfolio-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      # El host es el nombre del servicio en la red interna, no una IP.
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1h}
+      THROTTLE_TTL: ${THROTTLE_TTL:-60000}
+      THROTTLE_LIMIT: ${THROTTLE_LIMIT:-100}
+    networks:
+      - internal
+    labels:
+      - homelab.tier=opcional
+
+  web:
+    image: ghcr.io/antrax98/portfolio-web:bootstrap
+    container_name: portfolio-web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      # Interno y por HTTP: esta llamada no sale de Docker, así que no tiene
+      # sentido pasar por Traefik ni por TLS. Y si pusieras el dominio público
+      # acá, no resolvería: desde dentro de un contenedor el hairpin de NAT no
+      # vuelve a casa.
+      BACKEND_URL: http://api:3000
+    networks:
+      - internal
+      - traefik-proxy
+    labels:
+      - traefik.enable=true
+      # El nombre del router es GLOBAL en toda la instancia de Traefik: si
+      # chocara con el de otro servicio del homelab, gana el último que
+      # arranque y en silencio. De ahí 'portfolio' y no 'web'.
+      - traefik.http.routers.portfolio.rule=Host(`${APP_HOST:-portfolio.arcane.proyectron.dedyn.io}`)
+      - traefik.http.routers.portfolio.entrypoints=websecure
+      - traefik.http.routers.portfolio.tls.certresolver=letsencrypt
+      - traefik.http.services.portfolio.loadbalancer.server.port=3000
+      # Traefik ve varias redes en este contenedor; sin esto puede intentar
+      # llegarle por la interna, donde él no está.
+      - traefik.docker.network=traefik-proxy
+      - homelab.tier=opcional
+      - homepage.group=Proyectos
+      - homepage.name=Portafolio
+      - homepage.href=https://${APP_HOST:-portfolio.arcane.proyectron.dedyn.io}
+      - homepage.icon=si-nextdotjs
+      - homepage.description=Portafolio personal
+
+networks:
+  # Solo para que se hablen entre ellos. Sin salida a internet: ni la base ni
+  # la API tienen nada que buscar afuera.
+  internal:
+    driver: bridge
+    internal: true
+  # La del homelab, creada por Ansible (roles/docker_networks).
+  traefik-proxy:
+    external: true
+
+volumes:
+  portfolio_db:
