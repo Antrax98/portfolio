@@ -1,0 +1,72 @@
+services:
+  - type: web
+    name: portfolio-api
+    runtime: node
+    plan: free
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter nest-backend build
+    startCommand: pnpm --filter nest-backend start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      - key: PORT
+        value: "10000"
+
+      - key: DB_HOST
+        fromDatabase:
+          name: portfolio-db
+          property: host
+
+      - key: DB_PORT
+        fromDatabase:
+          name: portfolio-db
+          property: port
+
+      - key: DB_USER
+        fromDatabase:
+          name: portfolio-db
+          property: user
+
+      - key: DB_PASS
+        fromDatabase:
+          name: portfolio-db
+          property: password
+
+      - key: DB_NAME
+        fromDatabase:
+          name: portfolio-db
+          property: database
+
+      - key: JWT_SECRET
+        generateValue: true
+
+      - key: JWT_EXPIRES_IN
+        value: "1h"
+
+      - key: THROTTLE_TTL
+        value: "60000"
+
+      - key: THROTTLE_LIMIT
+        value: "100"
+
+      - key: REFRESH_TOKEN
+        sync: false
+
+  - type: web
+    name: portfolio-web
+    runtime: node
+    plan: free
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter next-frontend build
+    startCommand: pnpm --filter next-frontend start
+    envVars:
+      - key: BACKEND_URL
+        fromService:
+          name: portfolio-api
+          type: web
+          property: hostport
+
+databases:
+  - name: portfolio-db
+    plan: free
+    databaseName: portfolio
+    user: portfolio
