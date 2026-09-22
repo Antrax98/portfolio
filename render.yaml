@@ -74,11 +74,17 @@ services:
       paths:
         - apps/next-frontend/**
     envVars:
-      # A mano y no con fromService: la propiedad hostport devuelve
-      # "portfolio-api:10000" sin esquema, y serverFetch concatena
-      # `${BACKEND_URL}${endpoint}`, asi que sin http:// la URL es invalida.
+      # La URL publica de la api, del tipo https://portfolio-api-XXXX.onrender.com
+      #
+      # No vale la red privada: un servicio web del plan free puede mandar
+      # peticiones internas pero no recibirlas, asi que http://portfolio-api:10000
+      # da 503. Y el sufijo aleatorio no se sabe hasta que Render crea el
+      # servicio, de ahi el sync: false en vez de un valor fijo.
+      #
+      # No expone nada nuevo: con el patron BFF a la api solo la llama el
+      # servidor de Next, nunca el navegador.
       - key: BACKEND_URL
-        value: http://portfolio-api:10000
+        sync: false
 
 databases:
   - name: portfolio-db
