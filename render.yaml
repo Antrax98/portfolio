@@ -3,8 +3,19 @@ services:
     name: portfolio-api
     runtime: node
     plan: free
-    buildCommand: pnpm install --frozen-lockfile && pnpm --filter nest-backend build
-    startCommand: pnpm --filter nest-backend start:prod
+    region: oregon
+    # Las dos apps son proyectos de pnpm independientes, cada una con su
+    # lockfile: los filtros del workspace no resuelven nada y salen con exito
+    # sin construir. rootDir entra directo en la carpeta.
+    rootDir: apps/nest-backend
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    # Las migraciones van aqui y no en un preDeployCommand, que es solo para
+    # instancias de pago. Es idempotente: en cada arranque aplica las que falten.
+    startCommand: pnpm migration:run && pnpm start:prod
+    healthCheckPath: /api
+    buildFilter:
+      paths:
+        - apps/nest-backend/**
     envVars:
       - key: NODE_ENV
         value: production
@@ -49,24 +60,27 @@ services:
       - key: THROTTLE_LIMIT
         value: "100"
 
-      - key: REFRESH_TOKEN
-        sync: false
-
   - type: web
     name: portfolio-web
     runtime: node
     plan: free
-    buildCommand: pnpm install --frozen-lockfile && pnpm --filter next-frontend build
-    startCommand: pnpm --filter next-frontend start
+    region: oregon
+    rootDir: apps/next-frontend
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    buildFilter:
+      paths:
+        - apps/next-frontend/**
     envVars:
+      # A mano y no con fromService: la propiedad hostport devuelve
+      # "portfolio-api:10000" sin esquema, y serverFetch concatena
+      # `${BACKEND_URL}${endpoint}`, asi que sin http:// la URL es invalida.
       - key: BACKEND_URL
-        fromService:
-          name: portfolio-api
-          type: web
-          property: hostport
+        value: http://portfolio-api:10000
 
 databases:
   - name: portfolio-db
     plan: free
+    region: oregon
     databaseName: portfolio
     user: portfolio
