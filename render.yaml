@@ -4,11 +4,13 @@ services:
     runtime: node
     plan: free
     region: oregon
+    # Sin corepack enable: la imagen de build ya trae pnpm en /usr/bin, que es
+    # de solo lectura, y corepack falla al intentar reemplazarlo (EROFS).
     # Las dos apps son proyectos de pnpm independientes, cada una con su
     # lockfile: los filtros del workspace no resuelven nada y salen con exito
     # sin construir. rootDir entra directo en la carpeta.
     rootDir: apps/nest-backend
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    buildCommand: pnpm install --frozen-lockfile && pnpm build
     # Las migraciones van aqui y no en un preDeployCommand, que es solo para
     # instancias de pago. Es idempotente: en cada arranque aplica las que falten.
     startCommand: pnpm migration:run && pnpm start:prod
@@ -66,7 +68,7 @@ services:
     plan: free
     region: oregon
     rootDir: apps/next-frontend
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    buildCommand: pnpm install --frozen-lockfile && pnpm build
     startCommand: pnpm start
     buildFilter:
       paths:
