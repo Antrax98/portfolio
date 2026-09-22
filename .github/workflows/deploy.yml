@@ -1,0 +1,131 @@
+# ┌────────────────────────────────────────────────────┐
+# │ CI/CD del portafolio.                              │
+# └────────────────────────────────────────────────────┘
+# El flujo completo:
+#
+#   push a master
+#     → checks   lint y tests de las dos apps
+#     → build    imágenes etiquetadas con el SHA del commit
+#     → bump     reescribe los tags en deploy/compose.yaml y commitea
+#     → Arcane   ve el commit por GitOps y redespliega
+#
+# El tag es el SHA y NUNCA 'latest': la imagen que se probó es exactamente la
+# que se despliega, y volver atrás es revertir el commit de 'bump'.
+#
+# EL BUCLE NO OCURRE, por dos motivos independientes: paths-ignore excluye el
+# archivo que toca el bot, y además los push hechos con GITHUB_TOKEN no
+# disparan workflows por diseño de GitHub.
+name: deploy
+
+on:
+  push:
+    branches: [master]
+    paths-ignore:
+      - 'deploy/compose.yaml'
+      - '**.md'
+      - '**.adoc'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # para el commit de 'bump'
+  packages: write   # para publicar en GHCR
+
+env:
+  REGISTRY: ghcr.io
+  # En minúsculas a mano: el usuario es 'Antrax98' pero GHCR rechaza mayúsculas
+  # en los nombres de imagen.
+  OWNER: antrax98
+  PNPM_VERSION: 12.5.1
+
+jobs:
+  checks:
+    name: checks (${{ matrix.app }})
+    runs-on: ubuntu-latest
+    strategy:
+      # Que un fallo en una app no cancele la otra: querés ver los dos informes.
+      fail-fast: false
+      matrix:
+        include:
+          - app: nest-backend
+            run: pnpm lint && pnpm test
+          - app: next-frontend
+            run: pnpm lint
+    defaults:
+      run:
+        working-directory: apps/${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@v7
+
+      # pnpm ANTES que setup-node: si no, el cacheo de setup-node no encuentra
+      # el gestor y falla.
+      - uses: pnpm/action-setup@v6
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/${{ matrix.app }}/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: ${{ matrix.run }}
+
+  build:
+    name: build (${{ matrix.image }})
+    needs: checks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - app: nest-backend
+            image: portfolio-api
+          - app: next-frontend
+            image: portfolio-web
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          # Token efímero del propio run: no hay que crear ningún PAT.
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v7
+        with:
+          # El contexto es la carpeta de la app, no la raíz: cada una es un
+          # proyecto de pnpm independiente con su propio lockfile.
+          context: apps/${{ matrix.app }}
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ matrix.image }}:${{ github.sha }}
+          # Caché entre ejecuciones, en el almacén de Actions.
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+
+  bump:
+    name: bump
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Apuntar el compose a las imágenes recién publicadas
+        run: |
+          sed -i -E \
+            "s#(ghcr\.io/${OWNER}/portfolio-(api|web)):[^[:space:]]+#\1:${GITHUB_SHA}#g" \
+            deploy/compose.yaml
+          git diff -- deploy/compose.yaml
+
+      - name: Commitear el despliegue
+        run: |
+          if git diff --quiet -- deploy/compose.yaml; then
+            echo "El compose ya apuntaba a este SHA, no hay nada que commitear."
+            exit 0
+          fi
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "deploy: ${GITHUB_SHA::7}" -- deploy/compose.yaml
+          git push
