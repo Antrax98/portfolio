@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@eslint/js':
-        specifier: ^10.0.1
-        version: 10.0.1(eslint@10.10.0(jiti@2.6.1)(supports-color@8.1.1))
       '@nestjs/common':
         specifier: ^12.0.1
         version: 12.0.1(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
@@ -47,15 +44,6 @@ importers:
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
-      eslint-config-prettier:
-        specifier: ^10.1.8
-        version: 10.1.8(eslint@10.10.0(jiti@2.6.1)(supports-color@8.1.1))
-      eslint-plugin-prettier:
-        specifier: ^5.5.6
-        version: 5.5.6(eslint-config-prettier@10.1.8(eslint@10.10.0(jiti@2.6.1)(supports-color@8.1.1)))(eslint@10.10.0(jiti@2.6.1)(supports-color@8.1.1))(prettier@3.9.6)
-      globals:
-        specifier: ^17.12.0
-        version: 17.12.0
       pg:
         specifier: ^8.23.0
         version: 8.23.0
@@ -68,10 +56,10 @@ importers:
       typeorm:
         specifier: ^1.1.1
         version: 1.1.1(pg@8.23.0)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3))
-      typescript-eslint:
-        specifier: ^8.70.0
-        version: 8.70.0(eslint@10.10.0(jiti@2.6.1)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
     devDependencies:
+      '@eslint/js':
+        specifier: ^10.0.1
+        version: 10.0.1(eslint@10.10.0(jiti@2.6.1)(supports-color@8.1.1))
       '@nestjs/cli':
         specifier: ^12.0.0
         version: 12.0.0(@types/node@24.13.3)(prettier@3.9.6)(ts-loader@9.6.2(typescript@6.0.3)(webpack@5.110.3(uglify-js@3.19.3)))(webpack@5.110.3(uglify-js@3.19.3))
@@ -102,9 +90,21 @@ importers:
       boxen:
         specifier: ^8.0.1
         version: 8.0.1
+      eslint:
+        specifier: ^10.10.0
+        version: 10.10.0(jiti@2.6.1)(supports-color@8.1.1)
+      eslint-config-prettier:
+        specifier: ^10.1.8
+        version: 10.1.8(eslint@10.10.0(jiti@2.6.1)(supports-color@8.1.1))
+      eslint-plugin-prettier:
+        specifier: ^5.5.6
+        version: 5.5.6(eslint-config-prettier@10.1.8(eslint@10.10.0(jiti@2.6.1)(supports-color@8.1.1)))(eslint@10.10.0(jiti@2.6.1)(supports-color@8.1.1))(prettier@3.9.6)
       figlet:
         specifier: ^1.11.4
         version: 1.11.4
+      globals:
+        specifier: ^17.12.0
+        version: 17.12.0
       jest:
         specifier: ^30.0.0
         version: 30.5.1(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3))
@@ -132,6 +132,9 @@ importers:
       typescript:
         specifier: ^6.0.2
         version: 6.0.3
+      typescript-eslint:
+        specifier: ^8.70.0
+        version: 8.70.0(eslint@10.10.0(jiti@2.6.1)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
 
 packages:
 
