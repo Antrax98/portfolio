@@ -40,6 +40,11 @@ export class ProjectRepositoryAdapter implements ProjectRepositoryPort {
       Object.assign(entity, scalars);
 
       if (assets !== undefined) {
+        //el borrado es explicito a proposito. Las entidades declaran
+        //orphanedRowAction: 'delete', pero TypeORM 1.1.1 lo ignora: detecta las
+        //filas que sobran y les pone el project_id a NULL en vez de borrarlas,
+        //asi que cada edicion dejaba basura invisible en la tabla.
+        await manager.delete(ProjectAssetEntity, { project: { id } });
         entity.assets = this.buildAssets(manager, assets);
       }
 

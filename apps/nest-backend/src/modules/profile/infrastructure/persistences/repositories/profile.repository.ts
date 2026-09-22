@@ -30,6 +30,15 @@ export class ProfileRepositoryAdapter implements ProfileRepositoryPort {
       Object.assign(current, scalars);
 
       if (links !== undefined) {
+        //ver el comentario de project.repository.ts: orphanedRowAction no
+        //funciona en TypeORM 1.1.1 y las filas viejas quedaban con el
+        //profile_id a NULL. El id falta cuando el perfil aun no existe.
+        if (current.id != null) {
+          await manager.delete(ProfileLinkEntity, {
+            profile: { id: current.id },
+          });
+        }
+
         current.links = links.map((link) =>
           manager.create(ProfileLinkEntity, link),
         );
