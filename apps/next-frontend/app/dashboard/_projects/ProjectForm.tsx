@@ -38,6 +38,7 @@ const EMPTY: ProjectValues = {
   slug: '',
   title: '',
   description: '',
+  coverUrl: '',
   startedAt: '',
   endedAt: '',
   published: false,
@@ -246,6 +247,23 @@ export function ProjectForm({ project, onBack, onSaved }: Props) {
           error={fieldErrors.description}
           disabled={loading}
           placeholder="Qué es, qué resuelve, con qué está hecho..."
+        />
+
+        {/*
+          La portada es la imagen de la tarjeta del carrusel, no una de las de
+          la galería: la URL vive en el proyecto y llega desde el editor de
+          recursos. Sin portada, la tarjeta deja el hueco reservado en blanco.
+        */}
+        <TextField
+          label="URL de la portada"
+          value={values.coverUrl}
+          onChange={(e) => setValues((c) => ({ ...c, coverUrl: e.target.value }))}
+          error={Boolean(fieldErrors.coverUrl)}
+          helperText={
+            fieldErrors.coverUrl ??
+            'Imagen de la tarjeta en el portafolio (no es la galería)'
+          }
+          fullWidth
         />
 
         <RowsEditor<AssetKind>
