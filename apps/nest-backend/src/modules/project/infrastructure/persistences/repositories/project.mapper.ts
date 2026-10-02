@@ -8,6 +8,7 @@ export function toProjectProps(entity: ProjectEntity): ProjectProps {
     slug: entity.slug,
     title: entity.title,
     description: entity.description,
+    coverUrl: entity.coverUrl,
     startedAt: entity.startedAt,
     endedAt: entity.endedAt,
     published: entity.published,

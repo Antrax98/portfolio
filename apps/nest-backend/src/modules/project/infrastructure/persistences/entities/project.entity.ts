@@ -27,6 +27,9 @@ export class ProjectEntity {
   @Column({ type: 'text', nullable: true })
   description: string | null;
 
+  @Column({ name: 'cover_url', type: 'text', nullable: true })
+  coverUrl: string | null;
+
   @Column({ name: 'started_at', type: 'date', nullable: true })
   startedAt: Date | null;
 

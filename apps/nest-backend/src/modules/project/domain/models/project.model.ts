@@ -1,5 +1,6 @@
 import { DomainErrorCollector } from '../../../../common/domain/error-collector';
 import { ForbiddenException } from '../../../../common/exceptions/forbidden.exception';
+import { SAFE_URL_MESSAGE, isSafeUrl } from '../../../../common/domain/url';
 import { AuthenticatedCaller } from '../../../auth/domain/interfaces/auth.interface';
 import {
   ProjectProps,
@@ -60,6 +61,11 @@ export class Project {
       );
     }
 
+    const coverUrl = Project.normalize(changes.coverUrl);
+    if (coverUrl !== undefined && coverUrl !== null && !isSafeUrl(coverUrl)) {
+      errors.add('coverUrl', `"${coverUrl}" ${SAFE_URL_MESSAGE}`);
+    }
+
     if (
       changes.startedAt != null &&
       changes.endedAt != null &&
@@ -73,6 +79,7 @@ export class Project {
       ...(slug !== undefined ? { slug: slug ?? '' } : {}),
       ...(title !== undefined ? { title: title ?? '' } : {}),
       ...(description !== undefined ? { description } : {}),
+      ...(coverUrl !== undefined ? { coverUrl } : {}),
     };
 
     if (changes.assets === undefined) {

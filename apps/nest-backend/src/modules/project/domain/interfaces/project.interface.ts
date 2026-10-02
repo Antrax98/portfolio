@@ -11,6 +11,7 @@ export interface ProjectProps {
   slug: string;
   title: string;
   description: string | null;
+  coverUrl: string | null;
   startedAt: Date | null;
   endedAt: Date | null;
   published: boolean;
@@ -25,6 +26,7 @@ export type ProjectNewProps = Pick<ProjectProps, 'slug' | 'title'> &
     Pick<
       ProjectProps,
       | 'description'
+      | 'coverUrl'
       | 'startedAt'
       | 'endedAt'
       | 'published'

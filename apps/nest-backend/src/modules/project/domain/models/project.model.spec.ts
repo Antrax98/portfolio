@@ -17,6 +17,7 @@ const base: ProjectProps = {
   slug: 'test',
   title: 'test',
   description: 'test',
+  coverUrl: null,
   startedAt: FECHA,
   endedAt: FECHA,
   published: true,
@@ -82,6 +83,18 @@ describe('Project.validate', () => {
     it('convierte los saltos de linea de Windows en saltos normales', () => {
       expect(Project.validate({ description: 'uno\r\ndos' })).toStrictEqual({
         description: 'uno\ndos',
+      });
+    });
+
+    it('recorta la url de portada', () => {
+      expect(
+        Project.validate({ coverUrl: '  https://ejemplo.com/portada.jpg  ' }),
+      ).toStrictEqual({ coverUrl: 'https://ejemplo.com/portada.jpg' });
+    });
+
+    it('guarda una url de portada vacia como null', () => {
+      expect(Project.validate({ coverUrl: '   ' })).toStrictEqual({
+        coverUrl: null,
       });
     });
 
@@ -201,6 +214,14 @@ describe('Project.validate', () => {
         ),
       ).toEqual(['assets[0].url']);
     });
+
+    it('una url de portada que no es http, https ni mailto', () => {
+      expect(
+        camposConError(() =>
+          Project.validate({ coverUrl: 'javascript:alert(1)' }),
+        ),
+      ).toEqual(['coverUrl']);
+    });
   });
 
   describe('deja en paz lo que no le mandas', () => {
@@ -234,6 +255,10 @@ describe('Project.validate', () => {
           position: 3,
         },
       );
+    });
+
+    it('sin coverUrl, no toca la coverUrl', () => {
+      expect(Project.validate({ title: 'test' }).coverUrl).toBeUndefined();
     });
   });
 

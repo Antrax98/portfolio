@@ -151,6 +151,7 @@ export interface components {
             slug: string;
             title: string;
             description: string | null;
+            coverUrl: string | null;
             /** Format: date-time */
             startedAt: string | null;
             /** Format: date-time */
@@ -167,6 +168,7 @@ export interface components {
             slug: string;
             title: string;
             description?: string | null;
+            coverUrl?: string | null;
             startedAt?: string | null;
             endedAt?: string | null;
             published?: boolean;
@@ -177,6 +179,7 @@ export interface components {
             slug?: string;
             title?: string;
             description?: string | null;
+            coverUrl?: string | null;
             startedAt?: string | null;
             endedAt?: string | null;
             published?: boolean;

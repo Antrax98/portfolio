@@ -23,6 +23,7 @@ export interface ProjectValues {
   slug: string;
   title: string;
   description: string;
+  coverUrl: string;
   startedAt: string;
   endedAt: string;
   published: boolean;
@@ -41,6 +42,7 @@ export const projectValuesOf = (project: Project): ProjectValues => ({
   slug: project.slug,
   title: project.title,
   description: project.description ?? '',
+  coverUrl: project.coverUrl ?? '',
   startedAt: toDateInput(project.startedAt),
   endedAt: toDateInput(project.endedAt),
   published: project.published,
@@ -103,6 +105,9 @@ export function buildProjectPatch(
     patch.description = description;
   }
 
+  const coverUrl = nullable(values.coverUrl);
+  if (coverUrl !== (baseline.coverUrl ?? null)) patch.coverUrl = coverUrl;
+
   const dates = [
     ['startedAt', values.startedAt, baseline.startedAt],
     ['endedAt', values.endedAt, baseline.endedAt],
@@ -140,6 +145,9 @@ export function buildProjectCreate(
 
   const description = nullable(values.description);
   if (description) body.description = description;
+
+  const coverUrl = nullable(values.coverUrl);
+  if (coverUrl) body.coverUrl = coverUrl;
 
   const startedAt = nullable(values.startedAt);
   if (startedAt) body.startedAt = startedAt;

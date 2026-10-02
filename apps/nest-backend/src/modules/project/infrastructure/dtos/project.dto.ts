@@ -54,6 +54,11 @@ export class CreateProjectDto {
   @IsString()
   description?: string | null;
 
+  /** Portada de la tarjeta. URL directa, no un recurso de la galería. */
+  @IsOptional()
+  @IsParsableUrl()
+  coverUrl?: string | null;
+
   @IsOptional()
   @IsDateString()
   startedAt?: string | null;
@@ -95,6 +100,7 @@ export class ProjectDto implements ProjectProps {
   slug: string;
   title: string;
   description: string | null;
+  coverUrl: string | null;
   startedAt: Date | null;
   endedAt: Date | null;
   published: boolean;
