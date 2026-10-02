@@ -43,7 +43,7 @@ services:
       - homelab.tier=opcional
 
   api:
-    image: ghcr.io/antrax98/portfolio-api:ba5244b4e25707c7e1f3be2f6468c51a9bcb5b3f
+    image: ghcr.io/antrax98/portfolio-api:f36755fe6e61f4bd6a560567d26909047ae20203
     container_name: portfolio-api
     restart: unless-stopped
     depends_on:
@@ -68,7 +68,7 @@ services:
       - homelab.tier=opcional
 
   web:
-    image: ghcr.io/antrax98/portfolio-web:ba5244b4e25707c7e1f3be2f6468c51a9bcb5b3f
+    image: ghcr.io/antrax98/portfolio-web:f36755fe6e61f4bd6a560567d26909047ae20203
     container_name: portfolio-web
     restart: unless-stopped
     depends_on:
