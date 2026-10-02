@@ -130,4 +130,16 @@ export default tseslint.config(
       ],
     },
   },
+
+  // Test files pass mocked methods around as arguments — that is exactly
+  // `expect(repo.update).toHaveBeenCalledWith(...)`, the idiomatic way to
+  // assert on a fake. `unbound-method` exists to catch real `this` leaks in
+  // production code; jest mocks are stateless functions with no `this`, so the
+  // rule only adds noise in `.spec.ts`.
+  {
+    files: ['src/**/*.spec.ts'],
+    rules: {
+      '@typescript-eslint/unbound-method': 'off',
+    },
+  },
 );
