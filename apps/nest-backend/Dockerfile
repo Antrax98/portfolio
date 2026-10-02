@@ -6,7 +6,12 @@
 # son proyectos de pnpm independientes, cada una con su lockfile, así que no
 # hace falta arrastrar el repo entero.
 
-FROM node:22-alpine AS base
+# Node 24, no 22: el package.json de esta app declara engines.node >= 24.9.0
+# porque @nestjs/testing@12 es ESM-only y jest solo puede require() de ESM
+# desde node 24.9. La imagen no corre tests, pero si el manifiesto pide 24,
+# la imagen se construye y corre en 24 para no vivir con warnings ni con dos
+# versiones de node en el mismo deploy.
+FROM node:24-alpine AS base
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
 # El package.json de esta app no declara "packageManager" —el que lo declara es
@@ -36,7 +41,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile --prod
 
 # --- Imagen final ---
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000

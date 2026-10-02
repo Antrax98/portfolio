@@ -7,7 +7,10 @@
 # páginas que la usan tocan cookies() o headers(), lo que las vuelve dinámicas,
 # así que 'next build' no hace ninguna petición al backend.
 
-FROM node:22-alpine AS base
+# Node 24, igual que la imagen de la API: una sola versión en el stack (LTS
+# krypton). Next no exige 24, pero mantener las dos apps en la misma versión
+# que declara el engines del backend evita sorpresas entre imagen y local.
+FROM node:24-alpine AS base
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
 RUN corepack enable && corepack prepare pnpm@12.5.1 --activate
@@ -31,7 +34,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm build
 
 # --- Imagen final ---
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
