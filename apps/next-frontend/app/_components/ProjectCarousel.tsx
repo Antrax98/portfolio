@@ -124,7 +124,17 @@ export function ProjectCarousel({ initial, total, size }: Props) {
         }}
       >
         {items.map((project) => (
-          <Box key={project.id} sx={{ scrollSnapAlign: 'start' }}>
+          <Box
+            key={project.id}
+            sx={{
+              scrollSnapAlign: 'start',
+              // El grid estira la celda a la altura de la fila; el flex
+              // reparte ese alto dentro de la tarjeta para que todas acaben
+              // midiendo lo mismo.
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
             <ProjectCard project={project} />
           </Box>
         ))}
